@@ -7,7 +7,8 @@
     <div placeholder="Веедите текст поста" @keyup="image_delete($event)" @paste="link_ut($event)" id="img-from-local-storage" contenteditable="true">
       Веедите текст поста
     </div>
-    <!-- <iframe src="https://www.youtube.com/embed/27szVGikYH4??showinfo=0&controls=0&modestbranding=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen width="560" height="315"
+  <p>{{ errors.body }}</p>
+  <!-- <iframe src="https://www.youtube.com/embed/27szVGikYH4??showinfo=0&controls=0&modestbranding=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen width="560" height="315"
     ></iframe> -->
     <p>{{ errors.image }}</p>
     <input @change="save_img" ref="img" type='file' id="bannerImg">
@@ -15,7 +16,17 @@
       <option>Выберите категорию</option>
       <option v-for="category of categories" :value="category.name">{{ category.name }}</option>
   </select>
+  <p>{{ errors.category_name }}</p>
+  <p>{{ success_message }}</p>
   <button @click="makePost">Создать пост</button>
+
+  <div id="posts">
+    
+  </div>
+  <div v-for="post of posts">
+    <dt contenteditable="true" v-html="post.body"></dt>
+    <button @click="delete_post($event, post.id)">Удалить</button>
+  </div>
   </div>
 </template>
 
@@ -33,11 +44,15 @@ export default {
       imgs: [],
       img_names: [],
       categories: [],
+      posts: [],
       index: 0,
       category_name: '',
       errors: {
-        image: null
-      }
+        image: null,
+        body: null,
+        category_name: null
+      },
+      success_message: ''
     };
   },
   created() {
@@ -47,6 +62,12 @@ export default {
         console.log(response.data)
         this.categories = response.data.data;
         this.index = this.categories.length
+      });
+      this.$axios
+      .get("http://127.0.0.1:8000/api/getpostsuserpage")
+        .then((response) => {
+        console.log(response.data.data)
+        this.posts = response.data.data
       });
       localStorage.setItem('image', '');
   },
@@ -128,6 +149,11 @@ this.errors.image = 'Превышен лимит фотографий в пос�
     },
     makePost(e){
       e.preventDefault()
+      this.success_message = ''
+      this.errors = {
+        body: null,
+        category_name: null
+      }
       let body = document.getElementById('img-from-local-storage').innerHTML
       this.$axios.post("http://127.0.0.1:8000/api/makepost",
         {
@@ -142,12 +168,41 @@ this.errors.image = 'Превышен лимит фотографий в пос�
           }
       )
         .then((response) => {
-          console.log(response.data)
+          document.getElementById('img-from-local-storage').innerHTML = 'Введите текст поста'
+          this.success_message = 'Пост был создан'
+          this.$axios
+          .get("http://127.0.0.1:8000/api/getpostsuserpage")
+            .then((response) => {
+            console.log(response.data.data)
+            this.posts = response.data.data
+          });
         })
         .catch((err) => {
-          
+          if (err.response.data.errors.body) {
+            this.errors.body = err.response.data.errors.body[0];
+          }
+          if (err.response.data.errors.category_name) {
+            this.errors.category_name = err.response.data.errors.category_name[0];
+          }
 
         });
+    },
+    delete_post(e, id){
+      e.preventDefault()
+      this.success_message_change = ''
+      this.$axios.post("http://127.0.0.1:8000/api/deletepost",
+        {
+          id: id
+        }
+      )
+        .then((response) => {
+          this.$axios
+          .get("http://127.0.0.1:8000/api/getpostsuserpage")
+            .then((response) => {
+            console.log(response.data.data)
+            this.posts = response.data.data
+          });
+        })
     }
 
     

@@ -4,7 +4,9 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\categoryController;
 use App\Http\Controllers\postController;
 use App\Http\Resources\categoryResource;
+use App\Http\Resources\postResource;
 use App\Models\Categories;
+use App\Models\Post;
 use App\Models\userInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,10 +39,15 @@ Route::post('/useraddcategory', [categoryController::class, 'addCategory']);
 Route::post('/userremovecategory', [categoryController::class, 'removeCategory']);
 Route::post('/addcategory', [categoryController::class, 'createCategory']);
 Route::post('/updatecategory', [categoryController::class, 'updateCategory']);
+Route::post('/deletecategory', [categoryController::class, 'deleteCategory']);
 
 
 Route::post('/makepost', [postController::class, 'makePost']);
-
+Route::post('/deletepost', [postController::class, 'postDelete']);
+Route::get('/getpostsuserpage', function(){
+    $posts = Post::where('users_id', '=', Auth::user()->id)->orderBy('id', 'desc')->get();
+    return postResource::collection($posts);
+});
 
 
 Route::get('/categories', function () {

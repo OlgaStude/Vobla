@@ -13,6 +13,7 @@
       <p>{{ errors.name_not_chosen }}</p>
     <p>{{ success_message_change }}</p>
       <button @click="updateCategory($event)">Создать</button>
+      <button @click="deleteCategory($event)">Удалить</button>
     </div>
 </template>
 
@@ -111,6 +112,41 @@ export default {
               this.errors.name_change = err.response.data.errors.name;
             } else {
               this.errors.name_not_chosen = 'Категория для обновления не выбрана'
+            }
+          }
+
+        });
+    },
+    deleteCategory(e) {
+      e.preventDefault()
+      this.errors = {
+        name: [],
+        name_change: [],
+        name_not_chosen: ''
+      }
+      this.success_message_change = ''
+      this.$axios.post("http://127.0.0.1:8000/api/deletecategory",
+        {
+          name: this.old_name
+        }
+      )
+        .then((response) => {
+          this.success_message_change = response.data.message
+          this.old_name = ''
+          this.category_name = '',
+          this.$axios
+            .get("http://127.0.0.1:8000/api/categories")
+            .then((response) => {
+              this.categories = response.data.data;
+            });
+        })
+        .catch((err) => {
+          console.log(err.response.data.errors)
+          if (err.response.data.errors.name) {
+            if (err.response.data.errors.name[0] != 'Введите какое-нибудь значение') {
+              this.errors.name_change = err.response.data.errors.name;
+            } else {
+              this.errors.name_not_chosen = 'Категория для удаления не выбрана'
             }
           }
 

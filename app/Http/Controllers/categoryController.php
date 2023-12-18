@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\categoryRequest;
 use App\Models\Categories;
+use App\Models\Post;
 use App\Models\UsersCategories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,8 +43,18 @@ class categoryController extends Controller
     public function updateCategory(categoryRequest $req){
 
         Categories::where("name", $req->old_name)->update(["name" => $req->name]);
+        Post::where("category_name", $req->old_name)->update(["category_name" => $req->name]);
         return response()->json(['status' => 200, 'message' => 'Категория была измененна']);
 
     }
+
+    public function deleteCategory(categoryRequest $req){
+
+        Categories::where("name", $req->name)->delete();
+        Post::where("category_name", $req->name)->delete();
+        return response()->json(['status' => 200, 'message' => 'Категория была удалена']);
+
+    }
+    
     
 }
