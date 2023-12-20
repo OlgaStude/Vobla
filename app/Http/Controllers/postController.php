@@ -35,4 +35,26 @@ class postController extends Controller
 
     }
 
+
+    public function postUpdate(Request $req){
+
+        if($req->old_imgs != false || $req->old_imgs != ''){
+            $old_imgs = $req->old_imgs;  
+        }else{
+            $old_imgs = [];
+        }
+        $body = $req->body;
+        $names =[];
+        if($req->imgs != []){
+            foreach($req->imgs as $img){
+                $img->store('public/posts_imgs');
+                $names[] = "src=\"/storage/posts_imgs/".$img->hashName().'" ';
+                $old_imgs[] = "src=\"/storage/posts_imgs/".$img->hashName().'" ';
+            }
+            $body = preg_replace_array('(src="data.+?=")', $names, $req->body);
+        }
+        Post::where("id", $req->id)->update(["category_name" => $req->category_name, 'body' => $body, 'imgs' => implode(', ', $old_imgs)]);
+
+    }
+
 }

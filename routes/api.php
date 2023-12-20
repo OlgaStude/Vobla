@@ -44,6 +44,7 @@ Route::post('/deletecategory', [categoryController::class, 'deleteCategory']);
 
 Route::post('/makepost', [postController::class, 'makePost']);
 Route::post('/deletepost', [postController::class, 'postDelete']);
+Route::post('/updatepost', [postController::class, 'postUpdate']);
 Route::get('/getpostsuserpage', function(){
     $posts = Post::where('users_id', '=', Auth::user()->id)->orderBy('id', 'desc')->get();
     return postResource::collection($posts);

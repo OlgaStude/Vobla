@@ -17,11 +17,13 @@ class postResource extends JsonResource
     {
 
         $user = userInfo::where('users_id', '=', $this->users_id)->get();
+        $imgs = explode(', ', $this->imgs);
 
         return [
             'id' => $this->id,
             'body' => $this->body,
             'category_name' => $this->category_name,
+            'imgs' => $imgs,
             'time' => $this->created_at,
             'user_name' => $user[0]->name,
             'user_avatar' => $user[0]->avatar,
