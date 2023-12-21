@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('users_id')->constrained();
+            $table->foreignId('categories_id')->constrained();
             $table->string('category_name');
             $table->text('body');
             $table->string('imgs')->nullable();

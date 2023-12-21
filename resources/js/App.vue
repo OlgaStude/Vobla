@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="navbar-bav" v-if="isLogged">
-      <router-link to="/dashboard">Dashboard</router-link>
+      <router-link to="/">Dashboard</router-link>
       <router-link v-if="user.is_admin" to="/admin">Админ</router-link>
       <a href="#" @click="logout">logout</a>
       <a :href="$router.resolve({ name: 'userPage', params: { id: user.id } }).href">Личка</a>

@@ -4,6 +4,7 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\categoryController;
 use App\Http\Controllers\postController;
 use App\Http\Resources\categoryResource;
+use App\Http\Resources\postDashResource;
 use App\Http\Resources\postResource;
 use App\Models\Categories;
 use App\Models\Post;
@@ -45,9 +46,13 @@ Route::post('/deletecategory', [categoryController::class, 'deleteCategory']);
 Route::post('/makepost', [postController::class, 'makePost']);
 Route::post('/deletepost', [postController::class, 'postDelete']);
 Route::post('/updatepost', [postController::class, 'postUpdate']);
-Route::get('/getpostsuserpage', function(){
-    $posts = Post::where('users_id', '=', Auth::user()->id)->orderBy('id', 'desc')->get();
+Route::post('/getpostsuserpage', function(Request $req){
+    $posts = Post::where('users_id', '=', $req->id)->orderBy('id', 'desc')->get();
     return postResource::collection($posts);
+});
+Route::get('/getpostsdash', function(){
+    $posts = Post::orderBy('id', 'desc')->get();
+    return postDashResource::collection($posts);
 });
 
 
@@ -57,5 +62,9 @@ Route::get('/categories', function () {
 });
 Route::get('/userinfo', function () {
     $user = userInfo::where('users_id', '=', Auth::user()->id)->get();
+    return $user[0];
+});
+Route::post('/otheruserinfo', function (Request $req) {
+    $user = userInfo::where('users_id', '=', $req->id)->get();
     return $user[0];
 });

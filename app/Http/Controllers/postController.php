@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\postRequest;
+use App\Models\Categories;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,7 @@ class postController extends Controller
     public function makePost(postRequest $req){
         // return $req->body;
 
+        $category = Categories::where('name', '=', $req->category_name)->get();
         $body = $req->body;
         $names =[];
         if($req->imgs != []){
@@ -25,7 +27,7 @@ class postController extends Controller
             $body = preg_replace_array('(src="data.+?=")', $names, $req->body);
         }
 
-        Post::create(['users_id' => Auth::user()->id, 'category_name' => $req->category_name, 'body' => $body, 'imgs' => implode(', ', $names)]);
+        Post::create(['users_id' => Auth::user()->id, 'categories_id' => $category[0]->id, 'category_name' => $req->category_name, 'body' => $body, 'imgs' => implode(', ', $names)]);
 
     }
 
@@ -51,7 +53,7 @@ class postController extends Controller
                 $names[] = "src=\"/storage/posts_imgs/".$img->hashName().'" ';
                 $old_imgs[] = "src=\"/storage/posts_imgs/".$img->hashName().'" ';
             }
-            $body = preg_replace_array('(src="data.+?=")', $names, $req->body);
+            $body = preg_replace_array('(src="data.+?=" )', $names, $req->body);
         }
         Post::where("id", $req->id)->update(["category_name" => $req->category_name, 'body' => $body, 'imgs' => implode(', ', $old_imgs)]);
 

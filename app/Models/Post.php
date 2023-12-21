@@ -13,6 +13,7 @@ class Post extends Model
         'users_id',
         'category_name',
         'body',
-        'imgs'
+        'imgs',
+        'categories_id'
     ];
 }

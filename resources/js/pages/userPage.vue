@@ -1,8 +1,9 @@
 <template>
   <div class="row">
-    <a href="/updateinfo">Редактировать информацию
+    <a v-if="user.users_id == page_owner.users_id" href="/updateinfo">Редактировать информацию
     </a>
 
+  <div v-if="user.users_id == page_owner.users_id" id="create_posts_div">
     
     <div class="div_border" placeholder="Веедите текст поста" @keyup="image_delete($event)" @paste="link_ut($event)" id="img-from-local-storage" contenteditable="true">
       Веедите текст поста
@@ -20,7 +21,6 @@
   <p>{{ success_message }}</p>
   <button @click="makePost">Создать пост</button>
 
-  <div id="posts">
     
   </div>
   <div v-for="post of posts">
@@ -78,7 +78,9 @@ export default {
         category_name: null,
         modify_image: null
       },
-      success_message: ''
+      success_message: '',
+      user: [],
+      page_owner: []
     };
   },
   created() {
@@ -90,12 +92,30 @@ export default {
         this.index = this.categories.length
       });
       this.$axios
-      .get("http://127.0.0.1:8000/api/getpostsuserpage")
+      .post("http://127.0.0.1:8000/api/getpostsuserpage",
+      {
+          id: window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+        })
         .then((response) => {
         console.log(response.data.data)
         this.posts = response.data.data
       });
       localStorage.setItem('image', '');
+      this.$axios
+      .get("http://127.0.0.1:8000/api/userinfo")
+      .then((response) => {
+        this.user = response.data;
+
+      });
+      this.$axios
+      .post("http://127.0.0.1:8000/api/otheruserinfo",
+      {
+          id: window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+        })
+      .then((response) => {
+        this.page_owner = response.data;
+
+      });
   },
   methods: {
     save_img(){
@@ -200,11 +220,14 @@ this.errors.image = 'Превышен лимит фотографий в пос�
           document.getElementById('img-from-local-storage').innerHTML = 'Введите текст поста'
           this.success_message = 'Пост был создан'
           this.$axios
-          .get("http://127.0.0.1:8000/api/getpostsuserpage")
-            .then((response) => {
-            console.log(response.data.data)
-            this.posts = response.data.data
-          });
+      .post("http://127.0.0.1:8000/api/getpostsuserpage",
+      {
+          id: window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+        })
+        .then((response) => {
+        console.log(response.data.data)
+        this.posts = response.data.data
+      });
         })
         .catch((err) => {
           if (err.response.data.errors.body) {
@@ -226,11 +249,14 @@ this.errors.image = 'Превышен лимит фотографий в пос�
       )
         .then((response) => {
           this.$axios
-          .get("http://127.0.0.1:8000/api/getpostsuserpage")
-            .then((response) => {
-            console.log(response.data.data)
-            this.posts = response.data.data
-          });
+      .post("http://127.0.0.1:8000/api/getpostsuserpage",
+      {
+          id: window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+        })
+        .then((response) => {
+        console.log(response.data.data)
+        this.posts = response.data.data
+      });
         })
     },
     modify_post(e, imgs, category_name){
@@ -317,9 +343,9 @@ this.errors.image = 'Превышен лимит фотографий в пос�
           newImage.src = localStorage.getItem('new_image');
 
           newImage.style.width = 300+'px'
-          e.target.previousElementSibling.append(br)
-          e.target.previousElementSibling.append(newImage)
-          this.modify_imgs_names.push(e.target.previousElementSibling.children[e.target.previousElementSibling.children.length - 1].src)
+          e.target.previousElementSibling.previousElementSibling.append(br)
+          e.target.previousElementSibling.previousElementSibling.append(newImage)
+          this.modify_imgs_names.push(e.target.previousElementSibling.previousElementSibling.children[e.target.previousElementSibling.children.length - 1].src)
           localStorage.setItem('new_image', '');
           console.log(this.modify_imgs_names)
         }, "1000");
@@ -347,7 +373,10 @@ this.errors.image = 'Превышен лимит фотографий в пос�
         .then((response) => {
           console.log(response.data)
           this.$axios
-      .get("http://127.0.0.1:8000/api/getpostsuserpage")
+      .post("http://127.0.0.1:8000/api/getpostsuserpage",
+      {
+          id: window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+        })
         .then((response) => {
         console.log(response.data.data)
         this.posts = response.data.data
