@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\postRequest;
 use App\Models\Categories;
 use App\Models\Post;
+use App\Models\post_category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
+use Psy\Readline\Hoa\Console;
 
 class postController extends Controller
 {
     
     public function makePost(postRequest $req){
-        // return $req->body;
 
         $category = Categories::where('name', '=', $req->category_name)->get();
         $body = $req->body;
@@ -24,14 +25,22 @@ class postController extends Controller
                 $img->store('public/posts_imgs');
                 $names[] = "src=\"/storage/posts_imgs/".$img->hashName().'" ';
             }
-            $body = preg_replace_array('(src="data.+?=")', $names, $req->body);
+            $body = preg_replace_array('(src="data.+?=" )', $names, $req->body);
+           
         }
+        
+        
 
-        Post::create(['users_id' => Auth::user()->id, 'categories_id' => $category[0]->id, 'category_name' => $req->category_name, 'body' => $body, 'imgs' => implode(', ', $names)]);
-
+        $post = Post::create(['users_id' => Auth::user()->id, 'body' => $body, 'imgs' => implode(', ', $names)]);
+        foreach($req->categories as $category){
+            $category = Categories::where('name', '=', $category)->get();
+            post_category::create(['posts_id' => $post->id, 'categories_id' => $category[0]->id]);
+        }
     }
 
     public function postDelete(Request $req){
+
+        post_category::where('posts_id', '=', $req->id)->delete();
 
         Post::where("id", $req->id)->delete();
 
@@ -55,8 +64,27 @@ class postController extends Controller
             }
             $body = preg_replace_array('(src="data.+?=" )', $names, $req->body);
         }
-        Post::where("id", $req->id)->update(["category_name" => $req->category_name, 'body' => $body, 'imgs' => implode(', ', $old_imgs)]);
+        Post::where("id", $req->id)->update(['body' => $body, 'imgs' => implode(', ', $old_imgs)]);
 
+
+        $post = Post::where("id", $req->id)->get();
+
+            $links = post_category::where('posts_id', '=', $req->id)->get();
+            foreach($links as $link){
+                $category = Categories::find($link->categories_id);
+                if(!in_array($category->name, $req->categories)){
+                post_category::where([
+                    ['posts_id', '=', $req->id],
+                    ['categories_id', '=', $category->id]
+                ])->delete();
+                }
+            }
+
+            foreach($req->categories as $category){
+                $category = Categories::where('name', '=', $category)->get();
+                post_category::create(['posts_id' => $post[0]->id, 'categories_id' => $category[0]->id]);
+            }
+    
     }
 
 }

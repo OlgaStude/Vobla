@@ -2,9 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Categories;
+use App\Models\post_category;
 use App\Models\userInfo;
 use App\Models\UsersCategories;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class postDashResource extends JsonResource
 {
@@ -17,22 +21,28 @@ class postDashResource extends JsonResource
     public function toArray($request)
     {
 
-        $exists = UsersCategories::where([
-            ['users_id', '=', $this->users_id],
-            ['categories_id', '=', $this->categories_id]
-        ])->exists();
+        $cat_posts = post_category::where('posts_id', '=', $this->id)->get();
+        
+        $counter = 0;
+        foreach($cat_posts as $check){
+            $exists = UsersCategories::where([
+                ['users_id', '=', Auth::user()->id],
+                ['categories_id', '=', $check->categories_id]
+            ])->exists();
+            if($exists){
+                $counter++;
+            }
+        }
 
 
-        if($exists){
+        if($counter > 0){
             $user = userInfo::where('users_id', '=', $this->users_id)->get();
-            $imgs = explode(', ', $this->imgs);
+
 
             return [
                 'id' => $this->id,
                 'body' => $this->body,
-                'category_name' => $this->category_name,
-                'imgs' => $imgs,
-                'time' => $this->created_at,
+                'time' => Carbon::parse($this->created_at)->format('d.m.Y'),
                 'user_name' => $user[0]->name,
                 'user_avatar' => $user[0]->avatar,
             ];

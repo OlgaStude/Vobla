@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\categoryController;
+use App\Http\Controllers\friendsController;
 use App\Http\Controllers\postController;
 use App\Http\Resources\categoryResource;
+use App\Http\Resources\friendsRequestResource;
 use App\Http\Resources\postDashResource;
 use App\Http\Resources\postResource;
 use App\Models\Categories;
+use App\Models\friendsRequest;
 use App\Models\Post;
 use App\Models\userInfo;
 use Illuminate\Http\Request;
@@ -56,6 +59,9 @@ Route::get('/getpostsdash', function(){
 });
 
 
+Route::post('/sendrequest', [friendsController::class, 'sendRequest']);
+
+
 Route::get('/categories', function () {
     $categories = Categories::all();
     return categoryResource::collection($categories);
@@ -67,4 +73,8 @@ Route::get('/userinfo', function () {
 Route::post('/otheruserinfo', function (Request $req) {
     $user = userInfo::where('users_id', '=', $req->id)->get();
     return $user[0];
+});
+Route::get('/friendsrequests', function () {
+    $request = friendsRequest::where('reciever_id', '=', Auth::user()->id)->get();
+    return friendsRequestResource::collection($request);
 });

@@ -2,6 +2,9 @@
   <div class="row">
 
     <div v-for="post of posts">
+      <img :src="'/storage/profile_pics/'+post.user_avatar" style="width: 300px;">
+      <p>{{ post.user_name }}</p>
+      <p>{{ post.time }}</p>
       <dt class="dt_not_modify" v-html="post.body"></dt>
     </div>
 

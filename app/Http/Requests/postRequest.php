@@ -25,7 +25,7 @@ class postRequest extends FormRequest
     {
         return [
             'body' => 'required',
-            'category_name' => 'required',
+            'categories' => 'required',
         ];
     }
 
@@ -33,7 +33,7 @@ class postRequest extends FormRequest
     {
         return [
             'body.required' => 'Введите текст поста',
-            'category_name.required' => 'Выберите категорию'
+            'categories.required' => 'Выберите категорию'
         ];
     }
 }

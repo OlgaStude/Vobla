@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\categoryRequest;
 use App\Models\Categories;
 use App\Models\Post;
+use App\Models\post_category;
 use App\Models\UsersCategories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -50,8 +51,13 @@ class categoryController extends Controller
 
     public function deleteCategory(categoryRequest $req){
 
-        Categories::where("name", $req->name)->delete();
-        Post::where("category_name", $req->name)->delete();
+        $category = Categories::where("name", $req->name)->get();
+        $links = post_category::where('categories_id', '=', $category[0]->id)->get();
+        post_category::where('categories_id', '=', $category[0]->id)->delete();
+        $category = Categories::where("name", $req->name)->delete();
+        foreach($links as $link){
+            Post::where("id", $link->posts_id)->delete();
+        }
         return response()->json(['status' => 200, 'message' => 'Категория была удалена']);
 
     }
