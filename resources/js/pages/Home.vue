@@ -20,7 +20,8 @@ export default {
     };
   },
   created() {
-    this.$axios
+    if(IsLogged){
+      this.$axios
       .get("http://127.0.0.1:8000/api/getpostsdash")
         .then((response) => {
           for (let i = 0; i < response.data.data.length; i++) {
@@ -32,6 +33,14 @@ export default {
           this.posts = response.data.data;
           console.log(this.posts[0])
       });
+    } else{
+      this.$axios
+      .get("http://127.0.0.1:8000/api/getpostsall")
+        .then((response) => {
+          this.posts = response.data.data;
+      });
+    }
+    
   },
   methods: {},
 };

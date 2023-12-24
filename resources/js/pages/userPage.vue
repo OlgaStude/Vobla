@@ -1,29 +1,45 @@
 <template>
   <div class="row">
+    <div class="user_info">
+    <img :src="'/storage/profile_pics/'+page_owner.avatar" style="width: 300px;">
+    <p>{{ page_owner.name }}</p>
+    <div class="" v-for="user_category in page_owner.categories">
+      <p>{{ user_category.name}}</p>
+    </div>
+      
+    </div>
     <a v-if="user.users_id == page_owner.users_id" href="/updateinfo">Редактировать информацию
     </a>
-    <button v-else @click="send_request">Добавить в друзья</button>
+    <button v-else-if="!is_a_friend" @click="send_request">Добавить в друзья</button>
+    <a v-else :href="$router.resolve({name: 'Chat', params: { id: page_owner.user_id }}).href">Написать</a>
+    <button v-else @click="deleteFriend">Удалить из друзей</button>
 
-  <div v-if="user.users_id == page_owner.users_id" id="create_posts_div">
+    
+
+  <div v-if="user.users_id == page_owner.users_id && form_is_on" id="create_posts_div">
     
     <div class="div_border" placeholder="Веедите текст поста" @keyup="image_delete($event)" @paste="link_ut($event)" id="img-from-local-storage" contenteditable="true">
       Веедите текст поста
     </div>
-  <p>{{ errors.body }}</p>
-  <!-- <iframe src="https://www.youtube.com/embed/27szVGikYH4??showinfo=0&controls=0&modestbranding=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen width="560" height="315"
-    ></iframe> -->
-    <p>{{ errors.image }}</p>
-    <input @change="save_img" ref="img" type='file' id="bannerImg">
-    <div v-for="i in index">
-      <input type="checkbox" :value="categories[i - 1].name" name="category" :id="'box_' + i">
-      <label :for="'box_' + i">{{ categories[i - 1].name }}</label> 
+    <p>{{ errors.body }}</p>
+    <!-- <iframe src="https://www.youtube.com/embed/27szVGikYH4??showinfo=0&controls=0&modestbranding=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen width="560" height="315"
+      ></iframe> -->
+      <p>{{ errors.image }}</p>
+      <input @change="save_img" ref="img" type='file' id="bannerImg">
+      <div v-for="i in index">
+        <input type="checkbox" :value="categories[i - 1].name" name="category" :id="'box_' + i">
+        <label :for="'box_' + i">{{ categories[i - 1].name }}</label> 
     </div>
-  <p>{{ errors.category_name }}</p>
-  <p>{{ success_message }}</p>
-  <button @click="makePost">Создать пост</button>
+    <p>{{ errors.category_name }}</p>
+    <p>{{ success_message }}</p>
+    <button @click="makePost">Создать пост</button>
+    <button @click="close_form">Закрыть</button>
 
     
   </div>
+  <button v-else @click="open_form">Открыть форму</button>
+
+
   <div v-for="post of posts">
     <img :src="'/storage/profile_pics/'+post.user_avatar" style="width: 300px;">
       <p>{{ post.user_name }}</p>
@@ -38,11 +54,18 @@
     </div>
     <dt class="dt_modify div_border" @keyup="image_delete_modify($event)" contenteditable="true" v-html="old_body"></dt>
     <dt class="dt_not_modify" v-html="post.body"></dt>
-    <input v-if="user.users_id == page_owner.users_id" class="save_change_btn" @change="save_img_modify($event, post.imgs)" ref="img_modify" type='file' id="modifyImg">
-    <button v-if="user.users_id == page_owner.users_id" class="save_change_btn" @click="save_change($event, post.id)">Сохранить</button>
-    <button v-if="user.users_id == page_owner.users_id" class="modify_btn" @click="modify_post($event, post.imgs, post.category_name)">Редактировать</button>
-    <button v-if="user.users_id == page_owner.users_id" class="save_change_btn" @click="cancel_modify($event)">Отменить</button>
-    <button v-if="user.users_id == page_owner.users_id" @click="delete_post($event, post.id)">Удалить</button>
+    <div>
+      <div class="save_change_btn">
+        <p>{{ errors.modify_image }}</p>
+        <p>{{ errors.modify_body }}</p>
+        <p>{{ errors.modify_category_name }}</p>
+      </div>
+      <input v-if="user.users_id == page_owner.users_id" class="save_change_btn" @change="save_img_modify($event, post.imgs)" ref="img_modify" type='file' id="modifyImg">
+      <button v-if="user.users_id == page_owner.users_id" class="save_change_btn" @click="save_change($event, post.id)">Сохранить</button>
+      <button v-if="user.users_id == page_owner.users_id" class="modify_btn" @click="modify_post($event, post.imgs, post.category_name)">Редактировать</button>
+      <button v-if="user.users_id == page_owner.users_id" class="save_change_btn" @click="cancel_modify($event)">Отменить</button>
+      <button v-if="user.users_id == page_owner.users_id" @click="delete_post($event, post.id)">Удалить</button>
+    </div>
   </div>
   </div>
 </template>
@@ -86,11 +109,15 @@ export default {
         image: null,
         body: null,
         category_name: null,
-        modify_image: null
+        modify_category_name: null,
+        modify_image: null,
+        modify_body: null,
       },
       success_message: '',
       user: [],
       page_owner: [],
+      is_a_friend: false,
+      form_is_on: false
     };
   },
   created() {
@@ -100,12 +127,6 @@ export default {
         console.log(response.data)
         this.categories = response.data.data;
         this.index = this.categories.length
-      });
-      this.$axios
-      .get("http://127.0.0.1:8000/api/friendsrequests")
-        .then((response) => {
-        console.log(response.data.data)
-        this.friend_requests = response.data.data;
       });
       this.$axios
       .post("http://127.0.0.1:8000/api/getpostsuserpage",
@@ -130,10 +151,40 @@ export default {
         })
       .then((response) => {
         this.page_owner = response.data;
+        this.page_owner.categories.forEach((category, i) => {
+          if(!category.users){
+            this.page_owner.categories.splice(i, 1)
+          }
+        });
+      });
+      this.$axios
+      .post("http://127.0.0.1:8000/api/friendcheck",
+      {
+          id: window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+        })
+      .then((response) => {
+        this.is_a_friend = response.data;
 
       });
   },
   methods: {
+    open_form(){
+      this.form_is_on = true
+    },
+    close_form(){
+      this.form_is_on = false
+    },
+    deleteFriend(){
+      this.$axios
+      .post("http://127.0.0.1:8000/api/deletefriend",
+      {
+          id: this.page_owner.id
+        })
+        .then((response) => {
+        this.is_a_friend = false;
+        console.log(response.data)
+      });
+    },
     send_request(){
       this.$axios
       .post("http://127.0.0.1:8000/api/sendrequest",
@@ -143,6 +194,7 @@ export default {
         .then((response) => {
       });
     },
+    
     save_img(){
       this.errors.image = ''
 
@@ -251,6 +303,11 @@ this.errors.image = 'Превышен лимит фотографий в пос�
           console.log(response.data)
           document.getElementById('img-from-local-storage').innerHTML = 'Введите текст поста'
           this.success_message = 'Пост был создан'
+          for (var i = 0; i < ele.length; i++) {
+          if (ele[i].checked) {
+            ele[i].checked = false
+          }
+        }
          this.$axios
             .post("http://127.0.0.1:8000/api/getpostsuserpage",
               {
@@ -262,12 +319,13 @@ this.errors.image = 'Превышен лимит фотографий в пос�
             });
         })
         .catch((err) => {
+          console.log(err.response.data)
           if (err.response.data.errors.body) {
             this.errors.body = err.response.data.errors.body[0];
              
           }
-          if (err.response.data.errors.category_name) {
-            this.errors.category_name = err.response.data.errors.category_name[0];
+          if (err.response.data.errors.categories) {
+            this.errors.category_name = err.response.data.errors.categories[0];
           }
 
         });
@@ -305,17 +363,21 @@ this.errors.image = 'Превышен лимит фотографий в пос�
       document.querySelectorAll('.dt_not_modify').forEach(el => {
         el.style.display = 'block'
       })
+      this.errors.modify_image = ''
+      this.errors.modify_body = ''
+      this.errors.modify_category_name = ''
       this.category_make_update = []
       this.modify_imgs = imgs
       this.modify_new_imgs = []
-      this.old_body = e.target.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML
+      this.old_body = e.target.parentElement.previousElementSibling.innerHTML
       e.target.style.display = 'none'
       e.target.nextElementSibling.style.display = 'inline-block'
       e.target.previousElementSibling.style.display = 'inline-block'
       e.target.previousElementSibling.previousElementSibling.style.display = 'inline-block'
-      e.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.style.display = 'inline-block'
-      e.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.style.display = 'block'
-      e.target.previousElementSibling.previousElementSibling.previousElementSibling.style.display = 'none'
+      e.target.previousElementSibling.previousElementSibling.previousElementSibling.style.display = 'block'
+      e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.style.display = 'inline-block'
+      e.target.parentElement.previousElementSibling.previousElementSibling.style.display = 'block'
+      e.target.parentElement.previousElementSibling.style.display = 'none'
 
     },
     cancel_modify(e){
@@ -331,6 +393,7 @@ this.errors.image = 'Превышен лимит фотографий в пос�
       document.querySelectorAll('.dt_not_modify').forEach(el => {
         el.style.display = 'block'
       })
+      this.errors.modify_image = ''
       this.modify_imgs = []
       this.modify_new_imgs = []
       this.category_name_update = ''
@@ -351,7 +414,7 @@ this.errors.image = 'Превышен лимит фотографий в пос�
       console.log(this.modify_imgs_names)
     },
     save_img_modify(e, imgs){
-      if(this.modify_new_imgs.length + this.modify_imgs.length <= 5){
+      if(this.modify_new_imgs.length + this.modify_imgs.length < 5){
 
         const image = e.target.files[0];
         this.modify_new_imgs.push(image)
@@ -376,9 +439,9 @@ this.errors.image = 'Превышен лимит фотографий в пос�
           newImage.src = localStorage.getItem('new_image');
 
           newImage.style.width = 300+'px'
-          e.target.previousElementSibling.previousElementSibling.append(br)
-          e.target.previousElementSibling.previousElementSibling.append(newImage)
-          this.modify_imgs_names.push(e.target.previousElementSibling.previousElementSibling.children[e.target.previousElementSibling.children.length - 1].src)
+          e.target.parentElement.previousElementSibling.previousElementSibling.append(br)
+          e.target.parentElement.previousElementSibling.previousElementSibling.append(newImage)
+          this.modify_imgs_names.push(e.target.parentElement.previousElementSibling.previousElementSibling.children[e.target.parentElement.previousElementSibling.previousElementSibling.children.length - 1].src)
           localStorage.setItem('new_image', '');
           console.log(this.modify_imgs_names)
         }, "1000");
@@ -389,7 +452,10 @@ this.errors.image = 'Превышен лимит фотографий в пос�
     },
     save_change(e, id){
       e.preventDefault()
-      let ele = e.target.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.children;
+      this.errors.modify_image = ''
+      this.errors.modify_body = ''
+      this.errors.modify_category_name = ''
+      let ele = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.children;
       for (var i = 0; i < ele.length; i++) {
         if (ele[i].children[0].checked) {
           this.category_make_update.push(ele[i].children[0].value)
@@ -398,7 +464,7 @@ this.errors.image = 'Превышен лимит фотографий в пос�
         console.log(this.category_make_update)
       this.$axios.post("http://127.0.0.1:8000/api/updatepost",
         {
-          body: e.target.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML,
+          body: e.target.parentElement.previousElementSibling.previousElementSibling.innerHTML,
           categories: this.category_make_update,
           imgs: this.modify_new_imgs,
           old_imgs: this.modify_imgs,
@@ -424,11 +490,12 @@ this.errors.image = 'Превышен лимит фотографий в пос�
       this.cancel_modify()
         })
         .catch((err) => {
+        console.log(err.response.data.errors)
           if (err.response.data.errors.body) {
-            this.errors.body = err.response.data.errors.body[0];
+            this.errors.modify_body = err.response.data.errors.body[0];
           }
-          if (err.response.data.errors.category_name) {
-            this.errors.category_name = err.response.data.errors.category_name[0];
+          if (err.response.data.errors.categories) {
+            this.errors.modify_category_name = err.response.data.errors.categories[0];
           }
 
         });

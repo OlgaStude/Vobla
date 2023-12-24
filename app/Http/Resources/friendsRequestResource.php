@@ -23,6 +23,7 @@ class friendsRequestResource extends JsonResource
             $user = userInfo::where('users_id', '=', $this->sender_id)->get();
             return [
                 'user_id' => $this->sender_id,
+                'user_name' => $user[0]->name,
                 'user_avatar' => $user[0]->avatar
             ];
         }

@@ -47,7 +47,8 @@ class postController extends Controller
     }
 
 
-    public function postUpdate(Request $req){
+    public function postUpdate(postRequest $req){
+
 
         if($req->old_imgs != false || $req->old_imgs != ''){
             $old_imgs = $req->old_imgs;  
