@@ -37,6 +37,7 @@ class postResource extends JsonResource
             'time' => Carbon::parse($this->created_at)->format('d.m.Y'),
             'user_name' => $user[0]->name,
             'user_avatar' => $user[0]->avatar,
+            'user_id' => $user[0]->id,
         ];
     }
 }

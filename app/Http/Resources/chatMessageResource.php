@@ -26,8 +26,7 @@ class chatMessageResource extends JsonResource
                 'id' => $this->id,
                 'messager_id' => $this->sender_id,
                 'messager_name' => $user[0]->name,
-                'messager_surname' => $user[0]->surname,
-                'messager_pfp' => $user[0]->pfp,
+                'messager_pfp' => $user[0]->avatar,
                 'is_received_message' => $test,
                 'time' => Carbon::parse($this->created_at)->format('d.m.Y'),
                 'text' => $this->message
@@ -39,8 +38,7 @@ class chatMessageResource extends JsonResource
                 'id' => $this->id,
                 'messager_id' => $this->sender_id,
                 'messager_name' => $user[0]->name,
-                'messager_surname' => $user[0]->surname,
-                'messager_pfp' => $user[0]->pfp,
+                'messager_pfp' => $user[0]->avatar,
                 'is_received_message' => $test,
                 'time' => Carbon::parse($this->created_at)->format('d.m.Y'),
                 'text' => $this->message

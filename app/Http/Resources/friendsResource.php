@@ -17,11 +17,13 @@ class friendsResource extends JsonResource
     {
 
 
-        return [
-            'friend_id' => $this->id,
-            'friend_name' => $this->name,
-            'friend_avatar' => $this->avatar
-        ];
+        $friend = userInfo::where('users_id', '=', $this->friend_id)->get();
+
+                return [
+                    'friend_id' => $this->friend_id,
+                    'friend_name' => $friend[0]->name,
+                    'friend_avatar' => $friend[0]->avatar
+                ];
     }
 }
     
