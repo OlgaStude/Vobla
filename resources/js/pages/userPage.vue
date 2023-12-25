@@ -11,8 +11,11 @@
     <a v-if="user.users_id == page_owner.users_id" href="/updateinfo">Редактировать информацию
     </a>
     <button v-else-if="!is_a_friend" @click="send_request">Добавить в друзья</button>
-    <a v-else :href="$router.resolve({name: 'Chat', params: { id: page_owner.user_id }}).href">Написать</a>
-    <button v-else @click="deleteFriend">Удалить из друзей</button>
+    <div v-else>
+      <a :href="$router.resolve({ name: 'Chat', params: { id: page_owner.user_id } }).href">Написать</a>
+      <button @click="deleteFriend">Удалить из друзей</button>
+    </div>
+    
 
     
 
@@ -37,7 +40,7 @@
 
     
   </div>
-  <button v-else @click="open_form">Открыть форму</button>
+  <button v-else-if="user.users_id == page_owner.users_id" @click="open_form">Открыть форму</button>
 
 
   <div v-for="post of posts">

@@ -1,38 +1,61 @@
 <template>
-  <div class="container">
+<div class="container">
+    <div class="login_div">
+    <h1>Авторизация</h1>
     <form>
-      <label for="email">Логин</label>
       <input
         type="text"
         id="login"
         v-model="login"
         required
         autofocus
-        placeholder="enter login"
+        placeholder="Логин"
       />
-      <strong>{{ errors.login[0] }}</strong>
-
-      <label for="password">Пароль</label>
+      <p>{{ errors.login[0] }}</p>
       <input
         type="password"
         id="password"
         v-model="password"
         required
         autofocus
-        placeholder="enter password"
+        placeholder="Пароль"
       />
-    <strong>{{ errors.password[0] }}</strong>
+      <p>{{ errors.password[0] }}</p>
       </form>
-      <strong>{{ errors.error }}</strong>
+      <p class="login_error">{{ errors.error }}</p>
 
-    <button type="submit" @click="handleSubmit">Log in</button>
-
-    <div>
-      not with us yet??
-      <router-link to="/registration">J O I N I N</router-link>
-    </div>
+    <button class="login_btn" type="submit" @click="handleSubmit">Войти</button>
+  </div>
   </div>
 </template>
+
+<style>
+.login_div {
+  text-align: center;
+}
+
+.login_div h1 {
+  margin-top: 10%;
+
+}
+
+.login_btn {
+  width: 263px;
+  height: 50px;
+  border-radius: 15px;
+  border: none;
+  font-size: 24px;
+  background-color: #C1D7A4;
+  margin-top: 2%;
+  cursor: pointer;
+}
+
+.login_error {
+  font-size: 20px;
+  color: #36522A;
+  margin-top: 0.5%;
+}
+</style>
 
 <script>
 export default {

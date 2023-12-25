@@ -1,27 +1,130 @@
 <template>
-  <div class="row">
-    <div v-for="i in index">
+  <div class="container">
+    <div class="update_user_div">
+    <h1>Редактирование профиля</h1>
+    <p class="category_update_choose">Выберите категории</p>
+    <div class="update_user_category_div">
+    <div v-for="i in index" class="update_user_category_div2">
       <input @click="removeCategory($event)" v-if="categories[i - 1].users" checked type="checkbox" :value="categories[i - 1].name" name="category" :id="'box_' + i">
       <input @click="addCategory($event)" v-else type="checkbox" :value="categories[i - 1].name" name="category" :id="'box_' + i">
       <label :for="'box_' + i">{{ categories[i - 1].name }}</label> 
     </div>
-    <p>{{ category_success }}</p>
-    <input type="text" v-model="user.name">
-    <p>{{ errors.name }}</p>
-    <input type="file" ref="avatar">
-    <p>{{ errors.avatar[0] }}</p>
-    <input type="text" v-model="personal.login">
-    <p>{{ errors.login[0] }}</p>
-    <p>{{ update_success }}</p>
-    <button @click="update($event)">Обновить</button>
-    <input type="password" v-model="password_old">
-    <p>{{ errors.password_old }}</p>
-    <input type="password" v-model="password_new">
-    <p>{{ errors.password_new[0] }}</p>
-      <p>{{ password_success }}</p>
-    <button @click="changepassword($event)">Обновить</button>
+    </div>
+    <p class="update_user_success">{{ category_success }}</p>
+    <input type="file" ref="avatar" class="update_user_input">
+    <p class="update_user_error">{{ errors.avatar[0] }}</p>
+    <input type="text" v-model="user.name" class="update_user_input">
+    <p class="update_user_error">{{ errors.name }}</p>
+    <input type="text" v-model="personal.login" class="update_user_input">
+    <p class="update_user_error">{{ errors.login[0] }}</p>
+    <p class="update_user_success">{{ update_success }}</p>
+    <button @click="update($event)" class="update_user_btn">Редактировать профиль</button>
+    <h1>Изменение пароля</h1>
+    <input type="password" v-model="password_old" class="update_user_input" placeholder="Старый пароль">
+    <p class="update_user_error">{{ errors.password_old }}</p>
+    <input type="password" v-model="password_new" class="update_user_input" placeholder="Новый пароль">
+    <p class="update_user_error">{{ errors.password_new[0] }}</p>
+      <p class="update_user_success">{{ password_success }}</p>
+    <button @click="changepassword($event)" class="update_user_btn">Изменить пароль</button>
+  </div>
   </div>
 </template>
+
+<style>
+
+.update_user_div {
+  text-align: center;
+}
+
+.update_user_div {
+  margin-top: 4%;
+}
+
+.update_user_category_div {
+  display: flex;
+  justify-content: center;
+  margin-left: 43.5%;
+  margin-top: 1%;
+  width: 250px;
+  text-overflow: ellipsis;
+  overflow-x: scroll;
+  padding-left: 3%;
+  padding-bottom: 1%;
+}
+
+.category_update_choose {
+  font-size: 24px;
+  margin-top: 2%;
+}
+
+.update_user_category_div::-webkit-scrollbar {
+            height: 2px;
+        }
+        .update_user_category_div::-webkit-scrollbar-track {
+        background: #e8e8e8; 
+        }
+        .update_user_category_div::-webkit-scrollbar-thumb {
+        background: #1D1A0F; 
+        }
+
+.update_user_category_div2 {
+  margin-left: 8%;
+}
+
+.update_user_category_div2 input {
+  width: 25px;
+  height: 25px;
+  border: 2px solid black;
+}
+
+.update_user_category_div2 label {
+  font-size: 20px;
+  margin-left: 1%;
+  font-family: text;
+}
+
+.update_user_input {
+  width: 508px;
+  height: 54px;
+  border: 2px solid black;
+  border-radius: 50px;
+  background-color: #D9D9D9 0%;
+  font-size: 24px;
+  color: black;
+  padding: 1%;
+  margin-top: 2%;  
+}
+
+.update_user_btn {
+  width: 306px;
+  height: 62px;
+  border: none;
+  border-radius: 15px;
+  background-color: #C1D7A4;
+  font-size: 24px;
+  margin-top: 2%;
+  margin-bottom: 4%;
+  cursor: pointer;
+}
+
+.update_user_error {
+  font-size: 20px;
+  color: #36522A;
+  text-align: start;
+  margin-left: 38%;
+  margin-top: 0.5%;  
+}
+
+.update_user_success {
+   font-size: 20px;
+  color: #36522A;
+  margin-top: 0.5%;   
+}
+
+
+
+</style>
+
 
 <script>
 

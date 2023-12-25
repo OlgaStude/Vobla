@@ -1,28 +1,148 @@
 <template>
-  <div class="row">
-    <form action="">
-      <input type="text" id="name" v-model="name" placeholder="Имя и фамилия">
-      <p>{{ errors.name }}</p>
-      <input type="text" id="login" v-model="login" placeholder="Логин">
-      <p>{{ errors.login[0] }}</p>
-      <input type="text" id="email" v-model="email" placeholder="Эл.почта">
-      <p>{{ errors.email }}</p>
-      <input type="password" id="password" v-model="password" placeholder="Пароль">
-      <p>{{ errors.password[0] }}</p>
-      <input type="password" id="password_repeat" v-model="password_repeat" placeholder="Подтвердите пароль">
-      <p>{{ errors.password_repeat }}</p>
-      <div v-for="i in index">
-        <input type="checkbox" :value="categories[i - 1].name" name="category" :id="'box_'+i">
-        <label :for="'box_' + i">{{ categories[i - 1].name }}</label> 
-      </div>
-      <input type="file" id="avatar" ref="avatar">
-      <p>{{ errors.avatar[0] }}</p>
-      <input @click="checkmark" type="checkbox" id="check">
-      <label for="check">Я согласен на обработку персональных данных</label>
-      <button id="send_btn" disabled @click="register">Регистрация</button>
-    </form>
+  <div class="container">
+    <div class="register_div">
+      <h1>Регистрация</h1>
+      <form action="">
+        <input type="text" id="name" v-model="name" placeholder="Имя и фамилия">
+        <p>{{ errors.name }}</p>
+        <input type="text" id="login" v-model="login" placeholder="Логин">
+        <p>{{ errors.login[0] }}</p>
+        <input type="text" id="email" v-model="email" placeholder="Эл.почта">
+        <p>{{ errors.email }}</p>
+        <input type="password" id="password" v-model="password" placeholder="Пароль">
+        <p>{{ errors.password[0] }}</p>
+        <input type="password" id="password_repeat" v-model="password_repeat" placeholder="Подтвердите пароль">
+        <p>{{ errors.password_repeat }}</p>
+        <p class="interest_category">Интересующие категории</p>
+        <div class="register_category_div">
+        <div v-for="i in index" class="register_category_div2">
+          <input type="checkbox" :value="categories[i - 1].name" name="category" :id="'box_' + i" class="register_category_checkbox">
+          <label :for="'box_' + i">{{ categories[i - 1].name }}</label>
+        </div>
+        </div>
+        <input type="file" id="avatar" ref="avatar">
+        <p>{{ errors.avatar[0] }}</p>
+        <input @click="checkmark" type="checkbox" id="check" class="input_checkbox">
+        <label class="checkbox_label" for="check">Я согласен на обработку персональных данных</label>
+        <button class="register_btn" id="send_btn" disabled @click="register">Зарегистрироваться</button>
+      </form>
+    </div>
   </div>
 </template>
+
+<style>
+
+
+.container {
+  width: 1920px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.register_div {
+  text-align: center;
+}
+
+.register_div h1 {
+  margin-top: 10%;
+
+}
+
+form input {
+  width: 508px;
+  height: 54px;
+  border: 2px solid black;
+  border-radius: 50px;
+  background-color: #D9D9D9 0%;
+  font-size: 24px;
+  color: black;
+  padding: 1%;
+  margin-top: 2%;
+}
+
+.input_checkbox {
+  width: 25px;
+  height: 25px;
+}
+
+.checkbox_label {
+  font-family: text;
+  font-size: 24px;
+  margin-left: 1%;
+}
+
+.register_btn {
+  width: 306px;
+  height: 62px;
+  border-radius: 15px;
+  border: none;
+  background-color: #C1D7A4;
+  font-size: 24px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  margin-top: 2%;
+  cursor: pointer;
+  margin-bottom: 4%;
+}
+
+form p {
+  font-size: 20px;
+  color: #36522A;
+  text-align: start;
+  margin-left: 38%;
+  margin-top: 0.5%;
+}
+
+.register_category_div {
+  text-align: start;
+  display: flex;
+  justify-content: center;
+  margin-left: 42.5%;
+  margin-top: 1%;
+  width: 250px;
+  text-overflow: ellipsis;
+  overflow-x: scroll;
+  padding-left: 3%;
+  padding-bottom: 1%;
+}
+
+.register_category_div2 {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-left: 10%;
+}
+
+.register_category_div2 input {
+  width: 25px;
+  height: 25px;
+  border: 2px solid black;
+}
+
+.register_category_div2 label {
+  font-size: 20px;
+  font-family: text;
+}
+
+.interest_category {
+  font-size: 24px;
+  color: black;
+  margin-top: 4%;
+  margin-left: 42.5%
+}
+
+.register_category_div::-webkit-scrollbar {
+            height: 2px;
+        }
+        .register_category_div::-webkit-scrollbar-track {
+        background: #e8e8e8; 
+        }
+        .register_category_div::-webkit-scrollbar-thumb {
+        background: #1D1A0F; 
+        }
+
+</style>
 
 <script>
 export default {

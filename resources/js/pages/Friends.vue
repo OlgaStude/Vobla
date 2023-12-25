@@ -1,19 +1,111 @@
 <template>
-  <div class="row">
-    <input type="text" v-model="search" @keyup="search_friend">
-    <div class="" v-for="friend in friends">
-      <a :href="$router.resolve({ name: 'userPage', params: { id: friend.friend_id } }).href"><img style="width: 300px;" :src="'/storage/profile_pics/'+friend.friend_avatar" alt=""></a>
-      <a :href="$router.resolve({ name: 'userPage', params: { id: friend.friend_id } }).href"><p>{{ friend.friend_name }}</p></a>
+  <div class="container">
+    <input type="text" v-model="search" @keyup="search_friend" class="friends_search">
+    <div class="friends_list_div">
+    <div>
+    <h1>Список друзей</h1>
+    <div v-for="friend in friends" class="friends_div">
+      <a :href="$router.resolve({ name: 'userPage', params: { id: friend.friend_id } }).href"><img style="width: 125px; height: 125px; border-radius: 100%;" :src="'/storage/profile_pics/'+friend.friend_avatar" alt=""></a>
+      <a :href="$router.resolve({ name: 'userPage', params: { id: friend.friend_id } }).href"><p class="friend_name">{{ friend.friend_name }}</p></a>
     </div>
-    <div v-for="request in friend_requests" id="requests">
-      <a :href="$router.resolve({ name: 'userPage', params: { id: request.user_id } }).href"><img style="width: 300px;" :src="'/storage/profile_pics/'+request.user_avatar" alt=""></a>
-      <p>{{ request.user_name }}</p>
-      <p>Хочет добавить вас в друзья</p>
-      <button @click="request_response(true, request.user_id)">Принять</button>
-      <button @click="request_response(false, request.user_id)">Отклонить</button>
+    </div>
+    <div>
+    <h1>Заявки в друзья</h1>
+    <div v-for="request in friend_requests" id="requests" class="friends_request_div">
+      <a :href="$router.resolve({ name: 'userPage', params: { id: request.user_id } }).href"><img style="width: 125px; height: 125px; border-radius: 100%;" :src="'/storage/profile_pics/'+request.user_avatar" alt=""></a>
+      <div class="friends_request_div2">
+      <p class="friends_request_name">{{ request.user_name }}</p>
+      <p class="god_will">Хочет добавить вас в друзья</p>
+      </div>
+      <div class="friends_request_div3">
+      <button @click="request_response(true, request.user_id)" class="request_accept_btn">Принять</button>
+      <button @click="request_response(false, request.user_id)" class="request_decline_btn">Отклонить</button>
+      </div>
+    </div>
+    </div>
     </div>
   </div>
 </template>
+
+<style>
+
+.friends_search {
+  width: 487px;
+  height: 54px;
+  border: 2px solid black;
+  border-radius: 50px;
+  font-size: 24px;
+  color: black;
+  padding: 1%;
+  margin-left: 10%;
+  margin-top: 3%;
+}
+
+.friends_list_div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 2%;
+  margin-left: 10%;
+}
+
+.friends_div {
+  display: flex;
+  margin-top: 4%;
+}
+
+.friend_name {
+  margin-top: 46%;
+  margin-left: 70%;
+  color: black;
+  font-size: 40px;
+}
+
+.friends_request_div {
+  display: flex;
+  margin-top: 4%;
+  column-gap: 2%;
+}
+
+.friends_request_div2 {
+  margin-top: 4%;
+  margin-left: 5%;
+}
+
+.god_will {
+  font-size: 20px
+}
+
+.friends_request_name {
+  font-size: 40px;
+}
+
+.friends_request_div3 {
+  margin-left: 2%;
+}
+
+.request_accept_btn {
+  width: 263px;
+  height: 50px;
+  border: none;
+  border-radius: 15px;
+  font-size: 24px;
+  background-color: #C1D7A4;
+  margin-top: 5%;
+  cursor: pointer;
+}
+
+.request_decline_btn {
+  width: 263px;
+  height: 50px;
+  border: none;
+  border-radius: 15px;
+  font-size: 24px;
+  background-color: #F4BAB9;
+  margin-top: 5%;
+  cursor: pointer;
+}
+
+</style>
 
 <script>
 export default {
