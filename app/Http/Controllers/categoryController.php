@@ -44,7 +44,6 @@ class categoryController extends Controller
     public function updateCategory(categoryRequest $req){
 
         Categories::where("name", $req->old_name)->update(["name" => $req->name]);
-        Post::where("category_name", $req->old_name)->update(["category_name" => $req->name]);
         return response()->json(['status' => 200, 'message' => 'Категория была измененна']);
 
     }
