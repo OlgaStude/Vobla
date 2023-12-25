@@ -99,7 +99,7 @@ Route::post('/friendcheck', function (Request $req) {
     return $exists;
 });
 Route::get('/getfriends', function () {
-    $users = userInfo::where('users_id', '<>', Auth::user()->id)->get();
+    $users = Friends::where('user_id', '=', Auth::user()->id)->get();
     return friendsResource::collection($users);
 });
 Route::get('/getchats', function () {
