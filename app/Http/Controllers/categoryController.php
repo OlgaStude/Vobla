@@ -53,10 +53,13 @@ class categoryController extends Controller
         $category = Categories::where("name", $req->name)->get();
         $links = post_category::where('categories_id', '=', $category[0]->id)->get();
         post_category::where('categories_id', '=', $category[0]->id)->delete();
-        $category = Categories::where("name", $req->name)->delete();
-        foreach($links as $link){
-            Post::where("id", $link->posts_id)->delete();
+        if($links != []){
+            foreach($links as $link){
+                Post::where("id", $link->posts_id)->delete();
+            }
         }
+        UsersCategories::where('categories_id', '=', $category[0]->id)->delete();
+        Categories::where("name", $req->name)->delete();
         return response()->json(['status' => 200, 'message' => 'Категория была удалена']);
 
     }

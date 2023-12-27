@@ -25,7 +25,7 @@ class postController extends Controller
                 $img->store('public/posts_imgs');
                 $names[] = "src=\"/storage/posts_imgs/".$img->hashName().'" ';
             }
-            $body = preg_replace_array('(src="data.+?=" )', $names, $req->body);
+            $body = preg_replace_array('(src="data.+" )', $names, $req->body);
            
         }
         
@@ -63,7 +63,7 @@ class postController extends Controller
                 $names[] = "src=\"/storage/posts_imgs/".$img->hashName().'" ';
                 $old_imgs[] = "src=\"/storage/posts_imgs/".$img->hashName().'" ';
             }
-            $body = preg_replace_array('(src="data.+?=" )', $names, $req->body);
+            $body = preg_replace_array('(src="data.+" )', $names, $req->body);
         }
         Post::where("id", $req->id)->update(['body' => $body, 'imgs' => implode(', ', $old_imgs)]);
 

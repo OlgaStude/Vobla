@@ -9,6 +9,11 @@ use App\Http\Requests\registerRequest;
 use App\Http\Requests\registrationRequest;
 use App\Http\Requests\updateRequest;
 use App\Models\Categories;
+use App\Models\Chat_messages;
+use App\Models\Friends;
+use App\Models\friendsRequest;
+use App\Models\Post;
+use App\Models\post_category;
 use App\Models\User;
 use App\Models\userInfo;
 use App\Models\UsersCategories;
@@ -115,6 +120,22 @@ class UserController extends Controller
         User::where("id", Auth::user()->id)->update(["password" => Hash::make($req->new_password)]);
 
 
+    }
+
+
+    public function deleteUser(){
+
+        Chat_messages::where('sender_id', '=', Auth::user()->id)->orWhere('reciewer_id', '=', Auth::user()->id)->delete();
+        Friends::where('user_id', '=', Auth::user()->id)->orWhere('friend_id', '=', Auth::user()->id)->delete();
+        friendsRequest::where('reciever_id', '=', Auth::user()->id)->orWhere('sender_id', '=', Auth::user()->id)->delete();
+        $posts = Post::where('users_id', '=', Auth::user()->id)->get();
+        foreach($posts as $post){
+            post_category::where('posts_id', '=', $post->id)->delete();
+        }
+        Post::where('users_id', '=', Auth::user()->id)->delete();
+        UsersCategories::where('users_id', '=', Auth::user()->id)->delete();
+        userInfo::where('users_id', '=', Auth::user()->id)->delete();
+        User::where('id', '=', Auth::user()->id)->delete();
     }
 
 }

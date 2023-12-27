@@ -1,18 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\chatMessageRequest;
 use App\Http\Resources\chatMessageResource;
-use App\Models\Chat_messages;
+use App\Http\Resources\CMResource;
+use App\Models\ChatMessage;
+use App\Models\User;
+use GuzzleHttp\Psr7\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class chatController extends Controller
 {
+    
     public function create_message(chatMessageRequest $req){
 
-        $message = Chat_messages::create(['sender_id' => Auth::user()->id, 'reciewer_id' => $req->receiver_id, 'message' => $req->message, 'is_read' => 'Не прочитано']);
+        $message = ChatMessage::create(['sender_id' => Auth::user()->id, 'reciewer_id' => $req->receiver_id, 'message' => $req->message]);
 
         if($message){
            
@@ -26,9 +31,11 @@ class chatController extends Controller
 
     public function getChatMessages($id){
 
+        
+
     
             if($id != Auth::user()->id){
-                $messages = Chat_messages::where([
+                $messages = ChatMessage::where([
                     ['sender_id', '=', Auth::user()->id],
                     ['reciewer_id', '=', $id],
                 ])->orWhere([
@@ -36,7 +43,7 @@ class chatController extends Controller
                     ['sender_id', '=', $id],
                 ])->orderBy('id', 'asc')->get();
         
-                return chatMessageResource::collection($messages);
+                return CMResource::collection($messages);
             }
     
             return 'false';
@@ -44,4 +51,6 @@ class chatController extends Controller
         
 
     }
+    
+
 }

@@ -21,6 +21,8 @@ class postDashResource extends JsonResource
     public function toArray($request)
     {
 
+       
+
         $cat_posts = post_category::where('posts_id', '=', $this->id)->get();
         
         $counter = 0;

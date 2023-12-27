@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Chat_messages;
 use App\Models\userInfo;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,6 +23,8 @@ class chatMessageResource extends JsonResource
 
             $user = userInfo::where('id', '=', $this->sender_id)->get();
 
+            Chat_messages::where('id', $this->id)->update(['is_read' => 'Прочитано']);
+
             return [
                 'id' => $this->id,
                 'messager_id' => $this->sender_id,
@@ -29,7 +32,8 @@ class chatMessageResource extends JsonResource
                 'messager_pfp' => $user[0]->avatar,
                 'is_received_message' => $test,
                 'time' => Carbon::parse($this->created_at)->format('d.m.Y'),
-                'text' => $this->message
+                'text' => $this->message,
+                'is_read' => $this->is_read
             ];
         } else {
             $test = false;
@@ -41,7 +45,8 @@ class chatMessageResource extends JsonResource
                 'messager_pfp' => $user[0]->avatar,
                 'is_received_message' => $test,
                 'time' => Carbon::parse($this->created_at)->format('d.m.Y'),
-                'text' => $this->message
+                'text' => $this->message,
+                'is_read' => $this->is_read
             ];
         }
     }
