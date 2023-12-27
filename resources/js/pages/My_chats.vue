@@ -65,7 +65,12 @@ export default {
     this.$axios
       .get("http://127.0.0.1:8000/api/getchats")
         .then((response) => {
-        console.log(response.data)
+          console.log(response.data)
+        for (let i = 0; i < response.data.data.length; i++) {
+          if (response.data.data[i] === null) {
+            response.data.data.splice(i, 1)
+          }
+        }
         this.friends = response.data.data;
       });
   },

@@ -22,12 +22,13 @@
           <div v-else class="this_user">
                   <div class="text">
                   <div class="upper_line">
-                      <p class="name_user">{{ chat_message.messager_name }}</p>
                       <p class="date_user">{{ chat_message.time }}</p>
+                      <p class="name_user">{{ chat_message.messager_name }}</p>
                   </div>
                       <p class="lower_line">
                       {{ chat_message.text }}
                   </p>
+                  <p class="is_read">{{ chat_message.is_read }}</p>
                   </div>
               <img class="user_pfp_chat" :src="'/storage/profile_pics/' + chat_message.messager_pfp" style="width: 125px; height: 125px; border-radius: 100%;" alt="">
             </div>
@@ -47,6 +48,13 @@
 </template>
 
 <style>
+
+
+.empty{
+    font-size: 30px;
+    margin: 120px auto;
+    width: fit-content;
+}
 
 .chat_friend_info {
     display: flex;
@@ -106,12 +114,12 @@ hr {
     margin-top: 2%;
     position: relative;
     text-align: end;
-    left: 80%;
+    left: 60%;
 }
 
 .upper_line {
     display: flex;
-    width: 200px;
+    width: 400px;
     margin-left: 5%;
     margin-top: 5%;
 }
@@ -121,13 +129,17 @@ hr {
 }
 
 .name_user {
-    margin-right: 20%;
+    margin-left: 15%;
+}
+
+.text {
+    width: 500px;
 }
 
 .lower_line {
-    margin-left: 10%;
+    margin-left: 8%;
     margin-right: 10%;
-    margin-top: 8%;
+    margin-top: 4%;
     font-size: 24px;
 }
 
@@ -139,6 +151,12 @@ hr {
 
 .name_friend {
     margin-right: 20%;
+}
+
+.is_read {
+    font-size: 20px;
+    margin-top: 4%;
+    color: #36522A;
 }
 
 </style>

@@ -20,7 +20,10 @@
           <label :for="'box_' + i">{{ categories[i - 1].name }}</label>
         </div>
         </div>
-        <input type="file" id="avatar" ref="avatar">
+        <label class="custom-file-upload input-file">
+          <input @change="show_name()" class="file_upload"  type="file" id="avatar" ref="avatar">
+          <span id="file_selected">{{ file_name }}</span>
+        </label>
         <p>{{ errors.avatar[0] }}</p>
         <input @click="checkmark" type="checkbox" id="check" class="input_checkbox">
         <label class="checkbox_label" for="check">Я согласен на обработку персональных данных</label>
@@ -32,6 +35,30 @@
 
 <style>
 
+.file_upload{
+    display: none;
+}
+
+.input-file{
+    width: 508px;
+    height: 54px;
+    border: 2px solid black;
+    border-radius: 50px;
+    background-color: #D9D9D9 0%;
+    font-size: 24px;
+    font-family: 'text';
+    color: black;
+    display: block;
+    text-align: center;
+    padding-top: 7px;
+    cursor: pointer;
+    margin-top: 3%;
+    margin-bottom: 4px;
+    margin: auto;
+    box-sizing: border-box;
+    background-color: #fff;
+    overflow: hidden;
+}
 
 .container {
   width: 1920px;
@@ -105,6 +132,7 @@ form p {
   overflow-x: scroll;
   padding-left: 3%;
   padding-bottom: 1%;
+  margin-bottom: 20px;
 }
 
 .register_category_div2 {
@@ -142,6 +170,85 @@ form p {
         background: #1D1A0F; 
         }
 
+@media (max-width: 320px) {
+
+  .input-file{
+    width: 153px;
+    height: 16px;
+    border: 1px solid black;
+    border-radius: 50px;
+    font-size: 24px;
+    padding-top: 7px;
+    margin-top: 3%;
+    margin-bottom: 4px;
+}
+  .container {
+  width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.register_div h1 {
+  margin-top: 6%;
+}
+
+form input {
+  width: 153px;
+  height: 16px;
+  border: 1px solid black;
+  font-size: 8px;
+}
+
+.interest_category {
+  font-size: 8px;
+  margin-left: 35%;
+}
+
+.register_category_div {
+  width: 100px;
+  margin-left: 32%;
+}
+
+.register_category_div2 {
+  margin-left: 8%;
+}
+
+.register_category_div2:first-child {
+  margin-left: 20%;
+}
+
+.register_category_div2 input {
+  width: 8px;
+  height: 8px;
+}
+
+.register_category_div2 label {
+  font-size: 8px;
+}
+
+.input_checkbox {
+  width: 8px;
+  height: 8px;
+}
+
+.checkbox_label {
+  font-size: 8px;
+}
+
+.register_btn {
+  width: 84px;
+  height: 14px;
+  font-size: 8px;
+}
+
+form p { 
+  font-size: 6px;
+  margin-top: 1%;
+  margin-left: 28%;
+}
+
+}
+
 </style>
 
 <script>
@@ -164,7 +271,8 @@ export default {
         password_repeat: null,
         avatar: []
       },
-      index: 3
+      index: 3,
+      file_name: 'Фото профиля (необязательно)'
     };
   },
   created() {
@@ -177,6 +285,9 @@ export default {
       });
   },
   methods: {
+    show_name() {
+      this.file_name = this.$refs.avatar.files[0].name
+    },
     register(e) {
       e.preventDefault()
       this.errors = {
@@ -191,6 +302,10 @@ export default {
       
       if (!/^([A-Za-zА-Яа-я \-\_]+)$/.test(this.name)) {
         this.errors.name = 'В имени могут быть только буквы, дефис и пробелы'
+        console.log(this.errors.name)
+      };
+      if (!this.name.includes(' ')) {
+        this.errors.name = 'Введите имя и фамилию'
         console.log(this.errors.name)
       };
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {

@@ -11,7 +11,10 @@
     </div>
     </div>
     <p class="update_user_success">{{ category_success }}</p>
-    <input type="file" ref="avatar" class="update_user_input">
+    <label class="custom-file-upload input-file">
+      <input @change="show_name()" class="file_upload update_user_input"  type="file" id="avatar" ref="avatar">
+      <span id="file_selected">{{ file_name }}</span>
+    </label>
     <p class="update_user_error">{{ errors.avatar[0] }}</p>
     <input type="text" v-model="user.name" class="update_user_input">
     <p class="update_user_error">{{ errors.name }}</p>
@@ -31,6 +34,31 @@
 </template>
 
 <style>
+
+.file_upload{
+    display: none;
+}
+
+.input-file{
+    width: 508px;
+    height: 54px;
+    border: 2px solid black;
+    border-radius: 50px;
+    background-color: #D9D9D9 0%;
+    font-size: 24px;
+    font-family: 'text';
+    color: black;
+    display: block;
+    text-align: center;
+    padding-top: 9px;
+    cursor: pointer;
+    margin-top: 3%;
+    margin-bottom: 4px;
+    margin: auto;
+    box-sizing: border-box;
+    background-color: #fff;
+    overflow: hidden;
+}
 
 .update_user_div {
   text-align: center;
@@ -149,6 +177,7 @@ export default {
         password_old: null,
         password_new: [],
       },
+      file_name: 'Фото профиля (необязательно)'
     };
   },
   created() {
@@ -167,6 +196,9 @@ export default {
       });
   },
   methods: {
+    show_name() {
+      this.file_name = this.$refs.avatar.files[0].name
+    },
     update(e) {
       e.preventDefault()
       this.errors = {
@@ -274,6 +306,7 @@ export default {
     },
     removeCategory(e) {
       this.category_success = ''
+      alert()
       this.$axios.post("http://127.0.0.1:8000/api/userremovecategory",
         {
           name: e.target.value,
@@ -284,7 +317,6 @@ export default {
           this.$axios
             .get("http://127.0.0.1:8000/api/categories")
             .then((response) => {
-              console.log(response.data)
               this.categories = response.data.data;
               this.index = this.categories.length
             });

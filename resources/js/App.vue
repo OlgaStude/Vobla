@@ -87,6 +87,50 @@ a {
   bottom: 3vh;
 }
 
+@media (max-width: 320px) {
+
+body {
+  background: url(/storage/img/background_mb.png);
+  background-size: 100%;
+  background-position-x: center;
+}
+
+.navbar {
+  height: 69px;
+}
+
+.logo_div img {
+  width: 25px;
+  height: 25px;
+}
+
+.logo_div p {
+  font-size: 12px;
+  position: relative;
+  bottom: 1vh;
+}
+
+.login_register_div {
+  bottom: 6vh;
+
+}
+
+.login_register_div a {
+  font-size: 10px;
+}
+
+.user_nav_div a {
+  font-size: 10px;
+  bottom: 4vh;
+}
+
+.user_avatar {
+  width: 30px;
+  height: 30px;
+}
+
+}
+
 </style>
 
 <script>

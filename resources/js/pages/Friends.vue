@@ -51,11 +51,12 @@
 .friends_div {
   display: flex;
   margin-top: 4%;
+  height: 160px;
 }
 
 .friend_name {
-  margin-top: 46%;
-  margin-left: 70%;
+  margin-top: 40px;
+  margin-left: 40px;
   color: black;
   font-size: 40px;
 }
@@ -156,7 +157,17 @@ export default {
       .get("http://127.0.0.1:8000/api/friendsrequests")
         .then((response) => {
         console.log(response.data.data)
-        this.friend_requests = response.data.data;
+          this.friend_requests = response.data.data;
+        this.$axios
+        .get("http://127.0.0.1:8000/api/getfriends")
+        .then((response) => {
+          this.friends = [];
+          response.data.data.forEach(friend => {
+            if (friend.friend_name.toLowerCase().includes(this.search.toLowerCase())) {
+              this.friends.push(friend)
+            }
+          });
+        });
       });
       });
     },

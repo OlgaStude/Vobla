@@ -55,6 +55,20 @@
   color: #36522A;
   margin-top: 0.5%;
 }
+
+@media (max-width: 320px) {
+
+  .login_error {
+    font-size: 6px;
+  }
+
+  .login_btn {
+    width: 74px;
+    height: 14px;
+    font-size: 8px;
+  }
+}
+
 </style>
 
 <script>

@@ -100,6 +100,50 @@
   margin-right: 25%;
 }
 
+@media (max-width: 320px) {
+  .admin_category_div input {
+    border: 1px solid black;
+    width: 153px;
+    height: 16px;
+    font-size: 8px;
+  }
+
+  .admin_category_div select {
+    border: 1px solid black;
+    width: 153px;
+    height: 16px;
+    font-size: 8px; 
+    font-family: text;
+  }
+
+  .category_add_btn {
+    width: 98px;
+    height: 16px;
+    border-radius: 15px;
+    font-size: 8px;
+  }
+
+  .category_delete_btn {
+    width: 98px;
+    height: 16px;
+    border-radius: 15px;
+    font-size: 8px;   
+  }
+
+  .admin_error_add {
+    font-size: 6px;
+    margin-right: 58%;
+    margin-top: 6%;
+  }
+
+  .admin_error_delete {
+    font-size: 6px;
+    margin-right: 58%;
+    margin-top: -3%;
+  }
+
+}
+
 </style>
 
 <script>
@@ -219,6 +263,7 @@ export default {
           this.success_message_change = response.data.message
           this.old_name = ''
           this.category_name = '',
+          console.log(response.data)
           this.$axios
             .get("http://127.0.0.1:8000/api/categories")
             .then((response) => {
@@ -226,7 +271,6 @@ export default {
             });
         })
         .catch((err) => {
-          console.log(err.response.data.errors)
           if (err.response.data.errors.name) {
             if (err.response.data.errors.name[0] != 'Введите какое-нибудь значение') {
               this.errors.name_change = err.response.data.errors.name;
